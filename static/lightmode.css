@@ -1,0 +1,45 @@
+:root {
+    /* Default: Dark Mode */
+    --bg-main: #2b1613;
+    --bg-container: #3a1f1b;
+    --text-primary: #ffffff;    /* Puti sa Dark Mode */
+    --text-secondary: #fcc5a6;  /* Orange values */
+    --border-3d: rgba(255, 166, 114, 0.3);
+}
+
+/* Light Mode Overrides */
+[data-theme="light"] {
+    --bg-main: #f0f2f5;         /* Light Gray background */
+    --bg-container: #ffffff;    /* Puting containers */
+    --text-primary: #1a1a1a;    /* Halos itim na text para visible */
+    --text-secondary: #d35400;  /* Madilim na orange para sa values */
+    --border-3d: rgba(0, 0, 0, 0.15);
+}
+
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+/* Lahat ng containers mo */
+.node-status-box, .fire-incidents-box, .network-status-box, 
+.pinned-location-box, .search-box, .display-settings-box {
+    background: var(--bg-container) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-3d) !important;
+    /* Panatilihin ang 3D shadow pero gawing mas soft sa light mode */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+
+/* Ang mga values (Temp, Humidity, etc.) */
+.val {
+    color: var(--text-secondary) !important;
+    font-weight: bold;
+}
+
+/* Pati ang mga labels na "Location:", "Temp:" ay magdadark din */
+span:not(.val) {
+    color: var(--text-primary);
+}

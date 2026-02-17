@@ -1,0 +1,406 @@
+#flames-map{
+    position: relative;
+    top: 215px;
+    left: 20px;
+    height: 630px;
+    width: 55.9%;   
+    border: 1px solid #09000099;
+    border-radius: 10px;
+    z-index: 1 !important;
+
+}
+
+
+/* HOME BUTTON */
+#home-btn {
+    position: absolute;
+    top: 15px;         
+    right: 15px;       
+    z-index: 1000 !important;  
+    visibility: visible !important;   
+    width: 35px;
+    height: 35px;
+    background-color: white;
+    
+    border: 2px solid rgb(219, 47, 0);  
+    border-radius: 25px; 
+    cursor: pointer;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#home-btn img {
+    width: 22px;     
+    height: 22px;
+}
+#home-btn:hover {
+    background-color:rgba(24, 11, 0, 0.57); 
+    outline: 3px solid rgb(219, 47, 0); 
+   
+}
+#home-btn:active {
+    background-color: #d0d0d0; 
+}
+/* HOME BUTTON ENDING */
+
+
+
+/* ZOOM IN AND OUT BUTTON*/
+.custom-zoom-group {
+    position: absolute;
+    bottom: 25px; 
+    right: 15px;
+    z-index: 1000 !important;  
+    visibility: visible !important;   
+    display: flex;
+    flex-direction: column;
+    background:white; 
+    border: 2px solid  rgb(219, 47, 0);  
+    border-radius: 15px; 
+    overflow: hidden; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    width: 35px;
+    height: auto;
+
+    
+}
+.custom-zoom-group:hover {
+    outline: 3px solid  rgb(219, 47, 0); 
+    outline-offset: 0px; 
+    background: rgba(24, 11, 0, 0.57);
+}
+.zoom-btn {
+    background: transparent;
+    border: none;
+    color:#f65e00;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 10px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+.zoom-divider {
+    height: 1px;
+    background: rgba(255, 145, 77, 0.4); 
+    width: 100%;
+    margin: 0 auto;
+}
+#zoom-in {
+    border-top-left-radius: 13px;
+    border-top-right-radius: 13px;
+}
+
+#zoom-out {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+/* ZOOM IN AND OUT BUTTON*/
+
+
+/* SHOW MY LOCATION BUTTON*/
+#locate-btn {
+    position: absolute;
+    /* Inadjust ang top para nasa ilalim ng home button (15px + 35px height + 10px gap) */
+    top: 60px;          
+    right: 15px;       
+    z-index: 1000 !important;  
+    visibility: visible !important;   
+    width: 35px;
+    height: 35px;
+    background-color: white;
+    border: 2px solid rgb(219, 47, 0);  
+    border-radius: 25px; 
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#locate-btn img {
+    width: 28px;     
+    height: 28px;
+}
+
+#locate-btn:hover {
+    background-color: rgba(24, 11, 0, 0.57); 
+    outline: 3px solid rgb(219, 47, 0); 
+}
+
+#locate-btn:active {
+    background-color: #d0d0d0; 
+}
+/*SHOW MY LOCATION*/
+
+
+/*ROUTE PLANNER BUTTON*/
+.route-main-btn {
+    position: absolute; /* Importante ito para pwedeng galawin ang pwesto */
+    top: 105px;         /* Taas mula sa itaas ng screen */
+    right: 15px;         /* Distansya mula sa kaliwa */
+    z-index: 1000 !important;  
+    visibility: visible !important;   
+    background: #ffffff;
+    border: 2px solid rgb(219, 47, 0);  
+    border-radius: 25px;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+
+.route-menu {
+position: absolute;
+    top: 150px !important;        
+    right: 15px !important;         
+    z-index: 2000;
+    border: 2px solid #f65e00;
+    background: #3a1f1be9;
+    padding: 5px 15px;
+    border-radius: 12px;
+    display: none;     
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.calc-btn, .clear-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    padding: 10px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+}
+
+.calc-btn:hover{
+    background: rgba(177, 74, 0, 0.89);
+    border-radius: 8px;
+}
+.clear-btn:hover{
+    background:  rgba(177, 0, 0, 0.89);
+    border-radius: 8x;
+}
+
+.divider {
+     color: #4a2b27;
+     height: 100%;
+     margin: 0 auto;
+     width: 1px;
+}
+
+.route-main-btn:hover {
+   background: rgba(24, 11, 0, 0.57);
+   outline: 3px solid  rgb(219, 47, 0); 
+   outline-offset: 0px; 
+}
+/*ROUTE PLANNER BUTTON*/
+
+
+
+/* POPPED UP PINNED LOCATION SAVER */
+.leaflet-popup-content-wrapper {
+    background: #3a1f1be9 !important; 
+    color: white !important;
+    border-radius: 12px !important;
+    padding: 10px;
+    border: 2px solid #f65e00;
+}
+
+.custom-popup label {
+    display: block;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #e0e0e0;
+}
+
+.custom-popup input, .custom-popup textarea {
+    width: 100%;
+    background: #2a1614;
+    border: 1px solid #4a2b27;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.custom-popup .coords-display {
+    font-size: 14px;
+    color: #9e847f;
+    margin-bottom: 15px;
+}
+
+.save-btn {
+    background: #a3532d; /* Orange-brown button */
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.save-btn:hover{
+    background-color: orangered;
+}
+
+
+.cancel-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 10px;
+}
+
+.cancel-btn:hover{
+    background-color: #9e9e9e88;
+    border-radius: 6px;
+}
+
+/* POPPED UP PINNED LOCATION SAVER */
+
+
+
+/*ROUTE PLANNER ESTIMATED TIME*/
+#route-info-box {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10001 !important;
+    background: #33211be9 !important;
+    padding: 12px 18px;
+    border-radius: 12px;
+    display: none; /* Hawak ng JS (flex) */
+    align-items: center;
+    gap: 15px;
+    color: rgb(246, 176, 36) !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 2px solid #f65e00;
+    width: max-content;
+}
+
+#route-dist { 
+    color: #00ff2f; 
+    font-weight: bold; 
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+}
+
+#route-time { 
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+}
+
+.info-divider { 
+    color: #7b7b7b; 
+}
+
+#close-info-btn { 
+    background: none; 
+    border: none; 
+    color: white; 
+    cursor: pointer; 
+    font-size: 25px; 
+    margin-left: 10px; 
+    transition: color 0.2s;
+}
+
+#close-info-btn:hover {
+    color: red;
+}
+
+#routeplanner-icon {
+    width: 27px;    
+    height: 27px;
+}
+
+#distance-icon, #minutes-icon {
+    width: 30px;    
+    height: 30px;
+}
+
+/* ==========================================
+   ROUTE MENU DESIGN (Calculate | Clear Menu)
+   ========================================== */
+#route-menu {
+    position: absolute;
+    display: none;
+    flex-direction: row;
+    align-items: center; 
+    background-color: #3a1f1be9;
+    border: 2px solid #f75b00; 
+    border-radius: 12px; 
+    padding: 5px 15px; 
+    z-index: 2000 !important;      
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    width: max-content !important;   
+    min-width: 180px; 
+    white-space: nowrap;  
+    gap: 0; 
+    box-sizing: border-box;
+}
+#route-menu button {
+    background: none;
+    color: white; 
+    font-family: 'Arial', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    display: inline-block;
+    transition: background-color 0.2s, color 0.2s;
+}
+#calc-route{
+    font-family: 'Arial', sans-serif;
+    font-size: 15px;
+    padding: 10px 15px; 
+    border-radius: 10px;
+    margin-left: -8px !important;
+}
+#clear-route{
+    font-family: 'Arial', sans-serif;
+    font-size: 15px;
+    padding: 10px 15px; 
+    border-radius: 10px;
+    margin-right: -5px !important;
+}
+#calc-route:hover {
+    background-color:#f75b0088;
+    padding: 2 10px;
+    border-radius: 10px;
+
+}
+#clear-route:hover {
+    background-color:#f7150088;
+    border-radius: 10px;
+    padding: 2 10px;
+}
+.divider {
+    color: #f75b00;
+    font-weight: 100;
+    font-size: 20px;
+    opacity: 1;
+    pointer-events: none;
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    height: 100%; 
+    margin: 0 1.5px; 
+}
+/*ROUTE PLANNER ESTIMATED TIME*/

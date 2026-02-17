@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang = en>
+    <head>
+        <title>F.L.A.M.E.S.</title>
+        <link rel="icon" type="image/png" href="icons/heading-logo.png">
+        <link rel = "stylesheet" href="static/log-sign.css">
+        
+    </head>
+    
+    <body style="background: linear-gradient(to bottom, #620000fe, #89300064);
+                 background-color: #1a0f0d; margin: 0; overflow: hidden;">
+ 
+         
+        <div id="container">
+            <div id="image">
+                <img src = "icons/logo.png" alt = "Frames" width = "80">
+
+                <div class ="signup-container">
+                    
+                        <form id="signup-form" action="/signup" method="POST" class="active" onsubmit="return redirectToDashboard(event)">
+                            <h3>Sign up</h3>
+
+                            <div>
+                                <p><input type = "text" placeholder = "Username" name = "username"></p>     
+                                <p><input type = "text" placeholder = "Email(Optional)" name = "email"></p>      
+                                <p><input type = "password" placeholder = "Password" name = "userpassword"></p>
+                                <p style="font-size: 13px; font-family: arial;">Already have an account? <a href="login.html">Login</a></p>
+                                <p><button type="submit">Sign up</button></p>
+                            </div>
+                            
+                        </form>
+                </div>
+
+            </div>
+        </div>
+
+        
+        <script>
+        function redirectToDashboard(event) {
+            event.preventDefault(); 
+            window.location.href = "index.html"; 
+            return false;
+        }
+        </script>
+
+   
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

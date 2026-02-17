@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="2;url=dashboard.html">
+    <title>F.L.A.M.E.S.</title>
+    <link rel="stylesheet" href="static/indexloading.css">
+    <link rel="icon" type="image/png" href="icons/heading-logo.png">
+</head>
+
+
+<body style="background-color: #1a0f0d; margin: 0; overflow: hidden;">
+
+    <div id="loading-screen">
+            <h1 id="loading-flames-icon">
+                <img src = "icons/logo.png" alt = "Frames" width = "260" height="255" class="glow-effect">
+            </h1>
+    </div>
+
+
+
+
+    <script>
+        // 1. Basahin kung may 'logout' sa URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = urlParams.get('action');
+
+        // 2. Loading animation timer
+        setTimeout(() => {
+            if (action === 'logout') {
+                // Kung galing sa logout button, ituloy sa Login Page
+                window.location.href = "login.html"; 
+            } else {
+                // Kung normal na refresh o start, ituloy sa Dashboard
+                window.location.href = "dashboard.html"; 
+            }
+        }, 2000); // 2 seconds loading gaya ng dati mong set-up
+    </script>
+
+
+</body>
+</html>
+
+
+

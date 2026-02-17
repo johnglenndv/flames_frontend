@@ -1,0 +1,21 @@
+#loading-screen {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, #620000fe, #89300064);
+}
+#loading-flames-icon{
+    text-align: center;
+}
+
+
+
+.glow-effect {
+    animation: fire-glow 2s ease-in-out infinite;
+}
+@keyframes fire-glow {
+    0%, 100% { filter: drop-shadow(0 0 1.5px #eb5600); }
+    50% { filter: drop-shadow(0 0 5px #000000); }
+}

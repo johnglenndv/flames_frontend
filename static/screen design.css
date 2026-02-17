@@ -1,0 +1,217 @@
+/* DESKTOP VIEW - PERFECT EDGE ALIGNMENT & STABLE FULL SCREEN */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    height: 100vh;
+    overflow-x: hidden;
+    background-attachment: fixed;
+}
+/* 1. Map */
+#flames-map {
+    position: absolute;
+    top: 215px;
+    left: 20px;
+    width: calc(58.5% - 35px); 
+    height: calc(100vh - 230px); 
+    z-index: 1;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    /* Beveled Border Effect */
+    border-top: 2px solid rgb(3, 0, 0) !important;
+    border-left: 2px solid rgb(0, 0, 0) !important;
+    border-right: 3px solid rgb(0, 0, 0) !important;
+    border-bottom: 4px solid rgb(0, 0, 0) !important;
+}
+/* 2. Node Status Box*/
+.node-status-box {
+  position: absolute;
+  top: 90px;
+  left: 58.5%; 
+  width: 19.5%;
+  height: 35%;
+  min-height: 100px; 
+  background: #3a1f1b; 
+  padding: 20px;
+  border-radius: 12px;
+  color:#ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 2000;
+  transition: all 0.3s ease; 
+  display: flex;
+  overflow:hidden !important;
+  flex-direction: column; 
+}
+@media screen and (max-width: 1400px){
+    .node-status-box {
+        overflow-y: auto !important; /* Dito lang siya lalabas */
+    }
+    /*STYLING NG SCROLLBAR (Para hindi halata) */
+    .node-status-box::-webkit-scrollbar {
+        width: 6px;
+    }
+    .node-status-box::-webkit-scrollbar-thumb {
+        background: #8b756841;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+    
+    .node-data-grid {
+        flex-direction: column !important; /* Pinapababa ang content */
+        gap: 0px !important;
+ 
+        
+    }
+
+    .left-data, .right-data {
+        width: 100% !important; 
+        margin: -5px !important;
+        padding: 0px !important;
+        
+      
+    }
+    
+    .node-data-grid p {
+        justify-content: center !important;
+
+    }
+
+}
+/* 3. Fire Incidents Box*/
+.fire-incidents-box {
+  position: absolute;
+  top: 90px;
+  right: 20px; 
+  width: calc(100% - 58.5% - 19.5% - 32px);
+  height: 35%;
+  min-height: 71px; 
+  background: #3a1f1b; 
+  padding: 20px;
+  border-radius: 12px;
+  color:#ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 2000;
+  transition: all 0.3s ease; 
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column; 
+}
+/* 4. Network Status Box*/
+.network-status-box {
+    position: absolute;
+    top: calc(90px + 35% + 15px);
+    bottom: 15px; 
+    left: 58.5%; 
+    right: 20px; 
+    width: auto; 
+    height: auto; 
+    min-height: 71px; 
+    background: #3a1f1b; 
+    padding: 20px;
+    border-radius: 12px;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    z-index: 2000;
+    transition: all 0.3s ease; 
+    overflow: hidden; 
+    display: flex;
+    flex-direction: column;
+}
+/* 5. Pinned Location Box*/
+.pinned-location-box {
+    position: absolute;
+    top: 90px; 
+    left: calc(20px + 28.5% + 15px); 
+    width: calc(30% - 50px); 
+    height: 112px; 
+    background: #3a1f1b; 
+    padding: 20px;
+    border-radius: 12px;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+    z-index: 1000;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+}
+/* 5. Search Box*/
+.search-box {
+  position: absolute;
+  top: 90px;
+  left: 20px;
+  width: 28.5%;
+  background: #3a1f1b; 
+  padding: 20px;
+  border-radius: 12px;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 5000 !important;
+}
+
+
+
+/*SCREEN ADJUSTMENT - PARA SA PAG-MINIMIZE*/
+@media (max-width: 1200px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        height: auto; 
+        overflow-y: auto; 
+    }
+
+    .search-box, 
+    .node-status-box, 
+    .pinned-location-box, 
+    .fire-incidents-box, 
+    .network-status-box,
+    #flames-map {
+        position: relative; 
+        width: 98%;          
+        margin: 10px auto;  
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 10;
+        height: auto;
+        transition: width 0.1s ease; 
+    }
+
+    #main-header { order: 1; position: relative; }
+    .search-box { order: 2; }
+    .pinned-location-box { order: 3; }
+    .node-status-box { order: 4; }
+    .fire-incidents-box { order: 5; }
+    .network-status-box { order: 6; }
+    #flames-map { 
+        order: 7; 
+        height: 50vh;      
+        min-height: 350px;  
+    }
+    .inner-input {
+        width: 100%;
+    }
+    #home-btn, #locate-btn, .custom-zoom-group {
+        position: absolute;
+        right: 15px;
+        z-index: 20;
+    }
+}
+
+
+/* Super Small Screen (Mobile) */
+@media (max-width: 480px) {
+    .search-box, 
+    .node-status-box, 
+    .pinned-location-box, 
+    .fire-incidents-box, 
+    .network-status-box,
+    #flames-map {
+        width: 98%; 
+        margin: 5px auto;
+    }
+}

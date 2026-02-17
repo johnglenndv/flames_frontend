@@ -1,0 +1,606 @@
+body{
+    background-image: linear-gradient(to bottom, #7c0000, #e14f00);
+    display:flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-attachment: fixed;
+}
+
+#main-header{
+    height: 70px;
+    background: linear-gradient(to right, #230201e2, #511a01fa);
+    padding: -2 -2;   
+    box-shadow: 
+        0 4px 6px -4px rgba(0, 0, 0, 0.4), 
+        0 -2px 5px -1px rgba(24, 1, 1, 0.459) inset;
+    display: flex !important; 
+    justify-content: space-between !important; 
+    align-items: center; 
+    position: relative;
+    z-index: 1000;
+}   
+
+h1{
+   display: flex;
+   align-items: center;
+   justify-content: flex-start;
+   font-size: 28px;
+   margin-top: 4px;
+   margin-bottom: 0;
+   font-family: Georgia;
+   background: linear-gradient(to top, #540000, #e14f00);
+   -webkit-background-clip: text; 
+   background-clip: text;
+   -webkit-text-fill-color: transparent;
+   color: transparent;     
+}
+
+#flames-logo{
+    text-align:left; 
+    padding-left: 5px;
+}
+
+
+/* PROFILE BUTTON HEADER//////////////////////////////////////////////////////////////////////////////////////////*/
+.profile-icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px;
+    margin-right: 17px;
+
+}
+
+.profile-icon-btn img {
+    width: 38x;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.127);
+    object-fit: cover;
+   
+}
+
+.profile-icon-btn:hover img {
+    outline: 2px solid rgb(213, 62, 21); 
+
+}
+
+/* --- SIDE PANEL (SETTINGS) --- */
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -400px; /* Nakatago sa simula */
+    width: 325px;
+    height: 100%;
+    background: #1a0f0d; /* Bagay sa dark theme ng F.L.A.M.E.S. */
+    box-shadow: -5px 0 20px rgba(0,0,0,0.8);
+    z-index: 20000; /* Pinakamataas na layer */
+    transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth slide-in */
+    padding: 25px;
+    box-sizing: border-box;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex !important;           
+    flex-direction: column !important;
+}
+.side-panel.active {
+    right: 0;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    margin-bottom: 35px;
+}
+.panel-header h2 {
+    font-size: 20px;
+    margin: 0;
+    letter-spacing: .5px;
+}
+.close-btn {
+    font-size: 25px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: color 0.2s;
+    margin-top: -25px;
+    margin-right: -10px;
+}
+.close-btn:hover {
+    color: #ff4500;
+}
+/*ACCOUNT TO LOG OUT*/
+.logout-btn {
+    width: 100%;
+    background: transparent;
+    color: rgb(160, 160, 160);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 14px;
+    font-weight: 400;
+    border: none;
+    align-items: center;
+    gap: 10px;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start !important; 
+    margin-top: auto !important;           
+
+}
+.logout-btn:hover {
+    background-color: #621a002a;
+}
+.btn-icon {
+    width: 20px; /* I-adjust ang laki ng icon dito */
+    height: 20px;
+}
+/*ACCOUNT TO LOG OUT*/
+
+/* --- OVERLAY BACKGROUND --- */
+.panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none; /* Nakatago */
+    z-index: 15000;
+    backdrop-filter: blur(5px); 
+}
+.panel-overlay.active {
+    display: block;
+}
+/*DISPLAY//////////////////////////////////////////////////*/
+.display-settings-box {
+    background: #3808007a; 
+    padding: 13px 20px;
+    border-radius: 10px;
+    color: white;
+    font-family: Arial, sans-serif;
+    position: relative;
+    margin-top: 15px;
+    font-size: 14px !important;
+    border: 1px solid rgba(0, 0, 0, 0.592) !important;
+}
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+/* 2. Day/Night Switch Styling */
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+.theme-switch input {
+     opacity: 0; width: 0; height: 0;
+}
+.sun-moon-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #555;
+    transition: .4s;
+    border-radius: 34px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); /* Depth sa loob ng switch */
+}
+.sun-moon-slider:before {
+    position: absolute;
+    content: "☀️";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    height: 24px; width: 24px;
+    left: 3px; bottom: 3px;
+    background: linear-gradient(145deg, #f8cb29, #f4e2c5); /* 3D effect sa araw */
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+/* Dark Mode States */
+input:checked + .sun-moon-slider {
+    background-color: #1a1a1a;
+}
+input:checked + .sun-moon-slider:before {
+    content: "🌙";
+    background: linear-gradient(145deg, #00458b, #673000); /* 3D effect sa buwan */
+    transform: translateX(30px);
+}
+/*DISPLAY//////////////////////////////////////////////////*/
+/* PROFILE BUTTON HEADER//////////////////////////////////////////////////////////////////////////////////////////*/
+
+/*CONTAINERS 3D DESIGNS////////////////////////////////////////////////////////*/
+.node-status-box, .fire-incidents-box, .network-status-box, .pinned-location-box, .search-box {
+ 
+    box-shadow: 
+        0 8px 15px rgba(0, 0, 0, 0.5),           /* Dark outer shadow */
+        inset 0 1px 1px rgba(255, 255, 255, 0.2), /* Light inner top (Reflection) */
+        inset 0 -2px 5px rgba(0, 0, 0, 0.5);      /* Dark inner bottom (Depth) */
+
+    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 2px solid rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+    background: linear-gradient(145deg, #3b0a01, #341c18) !important; /* Slight gradient for volume */
+    backdrop-filter: blur(5px); /* Optional kung gusto mo ng glass effect */
+}
+/*CONTAINERS 3D DESIGNS////////////////////////////////////////////////////////*/
+
+/*SEARCH BAR//////////////////////////////////////////////////////////////////////////////////*/
+.search-header {
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.search-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.inner-input {
+  width: 100%;
+  background: #33221f;
+  border: 1px solid #4e342e;
+  border-radius: 8px;
+  padding: 12px 40px 12px 12px; 
+  color: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+}
+.inner-input:focus {
+  border: 2px solid #e14f00; 
+}
+.search-icon-inside {
+  position: absolute;
+  right: 5px; 
+  width: 40px;
+  height: 40px;
+  opacity: 0.6;
+  pointer-events: none; 
+  transition: opacity 0.2s; /* Smooth transition para sa pagtago */
+}
+.clr-btn {
+  position: absolute;
+  right: 15px;
+  color: #ffffff;
+  font-size: 25px;
+  cursor: pointer;
+  display: none; 
+  z-index: 5;
+}
+.clr-btn:hover{
+  color: rgba(255, 0, 0, 0.705);
+}
+.suggestions-container {
+  position: absolute;
+  width: 100%;
+  background: #33221f;
+  border: 2px solid #e14f00; 
+  border-radius: 9px;
+  margin-top: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+  z-index: 2000;
+  left: 0px;
+  padding: 0;
+}
+.suggestion-item {
+  padding: 10px;
+  color: white;
+  cursor: pointer;
+  border-bottom: 1px solid #4e342e; 
+  font-size: 14px;
+}
+.suggestion-item:last-child {
+  border-bottom: none; /* Alisin ang linya sa huling item */
+}
+.suggestion-item:hover {
+  background: #4e342e;
+}
+.hide-icon {
+  display: none !important;
+}
+/*SEARCH BAR///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+
+
+
+
+
+
+/*PINNED LOCATIONS////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+.pinned-location-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.pinned-location-header span {
+    font-size: 15px;
+    font-weight: 500;
+}
+.loc-icon-img {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+}
+.pinned-main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; 
+    margin-top: -10px;      
+}
+.pinned-counter h1 {
+    margin: 0;
+    line-height: 1;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 28px;       
+    background: none;
+    -webkit-text-fill-color: #ffffff;
+}
+.pinned-counter p {
+    font-size: 13px;  
+    color: #c0adad;
+    margin: 2px 0 0 0;     
+}
+.view-all-btn {
+    background: transparent;
+    border:1px solid #4e342e;
+    color: #ffffff;
+    padding: 8px 16px;     
+    border-radius: 8px;
+    font-size: 15px;     
+    cursor: pointer;
+    transition: 0.3s;
+    margin-bottom: 2px;   
+}
+.view-all-btn:hover {
+    background-image: linear-gradient(to right, #9c0d00, #c94600);
+}
+#list-pinned-view {
+    display: none; 
+    flex-direction: column;
+    height: 100%;
+    justify-content: flex-start; 
+    padding: 5px 15px; 
+    max-height: 400px; /* Sukat kung kailan lalabas ang scrollbar */
+    overflow-y: auto;  /* Lalabas ang scrollbar pag lumampas sa max-height */
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.list-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; 
+    overflow-y: auto;
+    padding-right: 5px;
+    width: 100%;
+}
+.list-wrapper::-webkit-scrollbar {
+    width: 4px;
+}
+.list-wrapper::-webkit-scrollbar-thumb {
+    background: #4a2b27;
+    border-radius: 10px;
+}
+.hide-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #4a2b27;
+    color: #ffffff;
+    padding: 5px; 
+    border-radius: 6px;
+    background-color:  #33221f;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: -10px; 
+    margin-bottom: 1px; 
+}
+.hide-btn:hover{
+  background: linear-gradient(to top, #900000, #e14f00);
+}
+.no-locations-msg {
+    color: #9e847f;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 15px !important; 
+}
+/* Custom Scrollbar  */
+#list-pinned-view::-webkit-scrollbar {
+    width: 6px;
+}
+#list-pinned-view::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+#list-pinned-view::-webkit-scrollbar-thumb {
+    background: #f75b00;
+    border-radius: 10px;
+}
+/*PINNED LOCATIONS/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+
+/* NODE STATUS///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+.node-header {
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 20px;
+  color: #ffffff; 
+  padding-bottom: 5px; 
+}
+#header-right {
+  font-size: 14px; 
+  opacity: 0.7; /* */
+}
+#status-content {
+  font-size: 15px; 
+  opacity: 0.6;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: flex-start; 
+  align-items: center;        
+  text-align: center;
+  margin-top: 1px;            
+}
+#status-content p {
+  width: 100%;             
+  margin: 7px 0;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;    
+}
+#status-content span.val {
+  color: #ffffff; /* */
+}
+
+
+/*INFO SA NODE STATUS NA LALABAS/////////////*/
+.node-popup-container {
+    width: 100%;
+    color: white;
+    font-family: Arial, sans-serif; 
+    margin-left: -8.5px;
+}
+/* ROW ALIGNMENT (Pantayin ang Icon at Text vertical) */
+.node-popup-container p {
+    display: flex !important;
+    align-items: center !important;
+    margin: 8px 0 !important; 
+    width: 100% !important;
+}
+/* ICON STYLING (Fixed size para pantay ang simula ng text) */
+.node-icon {
+    width: 18px;
+    height: 20px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-right: 0px;
+}
+/* LOCATION HEADER */
+.node-location {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 2px solid rgba(223, 82, 0, 0.3);
+    margin-bottom: 3px;
+    padding-bottom: 5px;
+}
+.node-location p {
+    justify-content: center; /* Nananatili sa gitna ang Location */
+    gap: 5px;
+}
+.node-data-grid {
+    display:flex !important;
+    justify-content: space-between;
+    gap: 10px;
+    flex-direction: row;
+    width: 100%;
+}
+
+.left-data p, .right-data p {
+    justify-content: flex-start !important; 
+    gap: 5px;
+
+}
+.left-data p span:not(.val), 
+.right-data p span:not(.val) {
+    display: inline-block;
+    width: 80px;
+    flex-shrink: 0;
+}
+.val {
+    color: #ff904f !important;
+    font-weight: 400px;
+    font-size: 15px;
+    white-space: nowrap;
+}
+/* NODE STATUS////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+/*FIRE INCIDENTS*/
+.fire-incidents-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    padding-bottom: 10px;
+    border-bottom: .5px solid #4a3a3a;
+}
+.incident-badge {
+    background: #530800;
+    padding: 7px 10px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    border: 1px solid rgba(187, 59, 0, 0.226);
+    font-family: Arial, Helvetica, sans-serif;
+}
+.badge-icon {
+    width: 17px;  
+    height: 16px;
+    object-fit: contain;
+}
+/*scrollable logic */
+.incident-list {
+    max-height: 1000px;
+    overflow-y: auto;
+    padding-right: 5px;
+    
+}
+.incident-card {
+    padding: 15px 0;
+    border-bottom: 1px solid #4a3a3a; 
+}
+.incident-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+.incident-status { font-size: 14px; color: #b3a2a2; margin-bottom: 3px; }
+.text-active { color: #ff4757; font-weight: bold; }
+.text-contained { color: #f1c40f; font-weight: bold; }
+.text-resolved { color: #2ecc71; font-weight: bold; }
+.btn-show-map {
+    width: 100%;
+    background-color: #ff7e1a; /* Orange button */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+.btn-show-map:hover { background-color: #e66d10; }
+.incident-list::-webkit-scrollbar { width: 6px; }
+.incident-list::-webkit-scrollbar-thumb { background: #4a2c2c; border-radius: 10px; }
+/*FIRE INCIDENTS*/
+
+
+
+
+/*NETWORK STATUS*/
+.network-status-header {
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 24px;
+  color: #ffffff; 
+  padding-bottom: 5px;
+  font-weight: 600;
+}
+/*NETWORK STATUS*/
