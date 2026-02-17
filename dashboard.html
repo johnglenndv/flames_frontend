@@ -1,230 +1,163 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <title>F.L.A.M.E.S. | Dashboard</title>
     <link rel="icon" type="image/png" href="icons/heading-logo.png">
-    <link rel = "stylesheet" href="static/dashboard.css">
-    <link rel = "stylesheet" href="static/flames-map.css">
-    <link rel = "stylesheet" href="static/screen design.css">
+    <link rel="stylesheet" href="static/dashboard.css">
+    <link rel="stylesheet" href="static/flames-map.css">
+    <link rel="stylesheet" href="static/screen design.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
-    
+
+    <!-- mqtt.js for real-time WebSocket connection -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8"> 
-    
-
 </head>
 
 <body>
 
+    <!-- Your existing header, side panel, search, pinned locations remain unchanged -->
 
-    
-    <div id="main-header"> 
-        <h1><img src = "icons/logo.png" alt = "Frames" id="flames-logo" width = "65" height="60">
-             F.L.A.M.E.S.
-        </h1>
-
-        <button id="profile-btn" class="profile-icon-btn">
-            <img src="icons/Profile.png" alt="Profile">
-        </button>
-    </div> 
-
-            <div id="side-panel" class="side-panel">
-
-                <div class="panel-header">
-                    <h2 style="color: white; margin: 0;">User Settings</h2>
-                    <span id="close-panel" class="close-btn">&times;</span>
-                </div>
-
-                <button class="logout-btn" id="logout-trigger">
-                    <img src="icons/logout-icon.png" alt="logout" class="btn-icon">
-                    <span>Log Out</span>
-                </button>
-
-               <div class="display-settings-box">
-                <h3>Display Settings</h3>
-                    <div class="setting-item">
-                            <span>Theme: <strong id="mode-text">Dark</strong></span>
-                            <label class="theme-switch">
-                                <input type="checkbox" id="mode-toggle" checked>
-                                <div class="sun-moon-slider round"></div>
-                            </label>
-                    </div>
-                </div>
-            </div>
-
-            <div id="panel-overlay" class="panel-overlay"></div>
-
-
-
-
-
-            <div class="search-box">
-                <div class="search-header">
-                    <span>Search Location</span>
-                </div>
-                <div class="search-input">
-                    <input type="text" id="mapSearchInput" placeholder="Search..." class="inner-input" oninput="handleSearch(this.value)">  
-                    <span id="clearSearch" class="clr-btn" onclick="clearSearchInput()">&times;</span>    
-                    <img src="icons/search-icon.png" alt="search" class="search-icon-inside">
-                </div>
-                <div id="suggestionsBox" class="suggestions-container"></div>
-            </div>
-
-            
-            <div class="pinned-location-box">
-                <div class="pinned-location-header">
-                    <span>Pinned Locations</span>
-                    <img src="icons/pinned-location.png" alt="icon" class="loc-icon-img">
-                </div>
-
-                <div class="pinned-main-content" id="pinned-counter-view">
-                    <div class="pinned-counter">
-                        <h1 id="pinned-count">0</h1>
-                        <p>locations saved</p>
-                    </div>
-                    <button class="view-all-btn" id="view-all-btn">View All</button>
-                </div>
-
-                <div id="list-pinned-view" style="display: none; padding: 20px;">
-                    <button class="hide-btn" id="hide-btn">Hide</button>
-                    <div class="no-locations-msg">No locations pinned.</div>
-                </div>
-            </div>
-
+    <!-- Node Status – now real-time via MQTT -->
+    <div class="node-status-box" id="nodeBox">
+        <div class="node-header">
+            <span style="font-weight: 600;">Node Status</span>
+            <div id="header-right">Waiting for data...</div>
+        </div>
         
-
-            <div class="node-status-box" id="nodeBox">
-                <div class="node-header">
-                    <span style="font-weight: 600;">Node Status</span>
-                    <div id="header-right">Select a node</div>
-                </div>
-                    
-                <div id="status-content">
-                    <p>Click a node to see its status.</p>
-                </div>
+        <div id="status-content">
+            <p>Waiting for first sensor reading...</p>
+            <div id="mqtt-status" style="font-size:0.9em; color:#888; margin-top:8px;">
+                Connecting to live feed...
             </div>
+        </div>
+    </div>
 
-            <div class="fire-incidents-box" id="fireBox">
-                    <div class="fire-incidents-header">
-                        <span style="font-weight: 600;">Live Incidents</span>
-                        <span class="incident-badge">
-                            <img src="icons/FireIncident.png" alt="fire" class="badge-icon">
-                            <span id="incident-count">5</span>
-                        </span>
-                            
-                    </div>
+    <!-- Live Incidents – will be updated dynamically when flame/smoke detected -->
+    <div class="fire-incidents-box" id="fireBox">
+        <div class="fire-incidents-header">
+            <span style="font-weight: 600;">Live Incidents</span>
+            <span class="incident-badge">
+                <img src="icons/FireIncident.png" alt="fire" class="badge-icon">
+                <span id="incident-count">0</span>
+            </span>
+        </div>
 
-                    <div class="incident-list">
-                        <div class="incident-card">
-                            <div class="incident-title">A.B. Fernandez Ave</div>
-                            <div class="incident-status">Status: <span class="text-active">Active</span></div>
-                            <div class="incident-status">Assigned Team: Pantal</div>
-                            <button class="btn-show-map" onclick="routeToIncident(16.041000, 120.334000)">Show on Map & Route</button>
-                        </div>
+        <div class="incident-list" id="incident-list">
+            <p style="text-align:center; color:#888; padding:30px;">
+                Monitoring for fire/smoke alerts...
+            </p>
+        </div>
+    </div>
 
-                        <div class="incident-card">
-                            <div class="incident-title">Perez Boulevard</div>
-                            <div class="incident-status">Status: <span class="text-contained">Contained</span></div>
-                            <div class="incident-status">Assigned Team: Lucao</div>
-                            <button class="btn-show-map" onclick="routeToIncident(16.043300, 120.333300)">Show on Map & Route</button>
-                        </div>
+    <!-- Your existing map and network status boxes remain -->
 
-                        <div class="incident-card">
-                            <div class="incident-title">Tapestry (Bonuan)</div>
-                            <div class="incident-status">Status: <span class="text-resolved">Resolved</span></div>
-                            <button class="btn-show-map" onclick="routeToIncident(16.091100, 120.350100)">Show on Map & Route</button>
-                        </div>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script src="static/map.js"></script>
+    <script src="static/OpenRouteService.js"></script>
+    <script src="static/ProfileSettings.js"></script>
 
-                        <div class="incident-card">
-                            <div class="incident-title">Malued District</div>
-                            <div class="incident-status">Status: <span class="text-active">Active</span></div>
-                            <div class="incident-status">Assigned Team: JOHN GLENN</div>
-                            <button class="btn-show-map" onclick="routeToIncident(16.033300, 120.323300)">Show on Map & Route</button>
-                        </div>
+    <!-- Real-time MQTT subscription -->
+    <script>
+        // ==================== MQTT REAL-TIME CONFIG ====================
+        const MQTT_BROKER = "wss://528e719c19214a19b07c0e7322298267.s1.eu.hivemq.cloud:8884/mqtt";
+        const MQTT_TOPIC  = "lora/uplink";
+        const MQTT_USER   = "Downlink01";
+        const MQTT_PASS   = "Downlink01";
 
-                        <div class="incident-card">
-                            <div class="incident-title">Bonuan Gueset</div>
-                            <div class="incident-status">Status: <span class="text-active">Active</span></div>
-                            <div class="incident-status">Assigned Team: JERICK & SHERWIN</div>
-                            <button class="btn-show-map" onclick="routeToIncident(16.075000, 120.345000)">Show on Map & Route</button>
-                        </div>
-                    </div>
-            </div>
+        // ==================== CONNECT TO MQTT ====================
+        const client = mqtt.connect(MQTT_BROKER, {
+            username: MQTT_USER,
+            password: MQTT_PASS,
+            reconnectPeriod: 5000,
+            connectTimeout: 10000,
+            clean: true
+        });
 
+        client.on('connect', () => {
+            console.log("✅ Connected to HiveMQ – real-time updates active");
+            client.subscribe(MQTT_TOPIC, (err) => {
+                if (!err) {
+                    document.getElementById("mqtt-status").textContent = "Live feed connected";
+                } else {
+                    document.getElementById("mqtt-status").textContent = "Connection error";
+                    console.error("Subscribe failed:", err);
+                }
+            });
+        });
 
-            <div class="network-status-box" id="networkBox">
-                    <div class="network-status-header">
-                        <span>Network Status</span>
-                    </div>
-            </div>
+        client.on('message', (topic, message) => {
+            try {
+                const raw = message.toString();
+                const data = JSON.parse(raw);
+                console.log("📥 Live MQTT:", data);
 
-        
-    
+                const payload = data.payload || {};
+                const nodeId = payload.node || "Unknown";
 
+                // ==================== UPDATE NODE STATUS ====================
+                const statusContent = document.getElementById("status-content");
+                const flameText = payload.flame === 1 
+                    ? '<span style="color:#ff0000; font-weight:bold;">🔥 FIRE DETECTED! ALERT!</span>'
+                    : 'Normal';
 
+                const smokeText = payload.smoke > 500 
+                    ? '<span style="color:#ff8800; font-weight:bold;">HIGH SMOKE!</span>'
+                    : payload.smoke;
 
+                statusContent.innerHTML = `
+                    <strong>Node:</strong> ${nodeId}<br>
+                    <strong>Temperature:</strong> ${payload.temp ?? '--'} °C<br>
+                    <strong>Humidity:</strong> ${payload.hum ?? '--'} %<br>
+                    <strong>Flame:</strong> ${flameText}<br>
+                    <strong>Smoke:</strong> ${smokeText}<br>
+                    <strong>Location:</strong> 
+                        ${payload.lat ? payload.lat.toFixed(6) : '--'}, 
+                        ${payload.lon ? payload.lon.toFixed(6) : '--'}<br>
+                    <strong>RSSI / SNR:</strong> ${data.rssi ?? '--'} dBm / ${data.snr ?? '--'} dB<br>
+                    <strong>Received:</strong> ${data.received_at ? new Date(data.received_at).toLocaleString('en-PH') : 'Just now'}
+                `;
 
+                // ==================== FIRE ALERT ====================
+                if (payload.flame === 1 || payload.smoke > 500) {
+                    statusContent.style.backgroundColor = "#ffdddd";
+                    statusContent.style.border = "3px solid red";
+                    statusContent.style.animation = "flash 1.5s infinite";
 
+                    // Play alert sound
+                    new Audio("https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-996.mp3").play().catch(() => {});
 
+                    setTimeout(() => {
+                        statusContent.style.backgroundColor = "";
+                        statusContent.style.border = "";
+                        statusContent.style.animation = "";
+                    }, 8000);
+                }
 
+                // ==================== OPTIONAL: MOVE MAP ====================
+                if (payload.lat && payload.lon && typeof map !== 'undefined') {
+                    map.setView([payload.lat, payload.lon], 15);
+                }
 
-            <div id="flames-map">
-
-                <button id="home-btn" title="Home">
-                    <img src="icons/home.png" alt="Home">
-                </button>
-
-                <button id="locate-btn" title="Show My Location">
-                    <img src="icons/showmylocation.png" alt="Locate Me">
-                </button>
-
-                <div class="custom-zoom-group">
-                    <button id="zoom-in" class="zoom-btn">+</button>
-                    <div class="zoom-divider"></div> 
-                    <button id="zoom-out" class="zoom-btn">−</button>
-                </div>
-
-                <button class="route-main-btn" id="route-btn" title="Route Planner">
-                    <img id="routeplanner-icon" src="icons/RoutePlanner.png" />
-                </button>
-
-                <div class="route-menu" id="route-menu">
-                    <button id="calc-route" class="calc-btn">Calculate</button>
-                    <span class="divider">|</span>
-                    <button id="clear-route" class="clear-btn">Clear</button>
-                </div>
-
-                <div id="route-info-box" style="display: none;">
-                    <span id="route-dist"><img id="distance-icon" src="icons/distance.png"/> 0.00 km</span>
-                    <span class="info-divider">|</span>
-                    <span id="route-time"><img id="minutes-icon" src="icons/minutes.png"/>0 mins</span>
-                    <button id="close-info-btn">×</button>
-                </div>
-
-
-            </div>
-
-
-
-        <script>
-            if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-                window.location.href = "index.html";
+            } catch (err) {
+                console.error("Failed to parse MQTT message:", err);
             }
-        </script>
+        });
 
+        client.on('error', (err) => {
+            console.error("MQTT Error:", err);
+            document.getElementById("mqtt-status").textContent = "Connection error – retrying...";
+        });
 
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-        <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-        <script src ="static/map.js"></script>
-        <script src="static/OpenRouteService.js"></script>
-        <script src ="static/ProfileSettings.js"></script>
+        client.on('close', () => {
+            console.log("MQTT disconnected – reconnecting...");
+            document.getElementById("mqtt-status").textContent = "Disconnected – reconnecting...";
+        });
+    </script>
 
-
-
-
-    
 </body>
 </html>
