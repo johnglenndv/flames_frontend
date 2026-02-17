@@ -9,7 +9,7 @@
     <link rel = "stylesheet" href="static/screen design.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
-    
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8"> 
@@ -225,6 +225,132 @@
 
 
 
-    
+    <script>
+    // ==================== REAL-TIME MQTT CONFIG ====================
+    const MQTT_BROKER = "wss://528e719c19214a19b07c0e7322298267.s1.eu.hivemq.cloud:8884/mqtt";
+    const MQTT_TOPIC  = "lora/uplink";
+    const MQTT_USER   = "Downlink01";
+    const MQTT_PASS   = "Downlink01";
+
+    // ==================== CONNECT TO MQTT ====================
+    const client = mqtt.connect(MQTT_BROKER, {
+        username: MQTT_USER,
+        password: MQTT_PASS,
+        reconnectPeriod: 5000,
+        connectTimeout: 10000,
+        clean: true
+    });
+
+    client.on('connect', () => {
+        console.log("✅ Connected to HiveMQ – real-time updates active");
+        client.subscribe(MQTT_TOPIC, (err) => {
+            if (!err) {
+                document.getElementById("mqtt-status")?.textContent = "Live feed connected";
+            } else {
+                document.getElementById("mqtt-status")?.textContent = "Connection error";
+                console.error("Subscribe failed:", err);
+            }
+        });
+    });
+
+    client.on('message', (topic, message) => {
+        try {
+            const raw = message.toString();
+            const data = JSON.parse(raw);
+            console.log("📥 Live MQTT:", data);
+
+            const payload = data.payload || {};
+            const nodeId = payload.node || "Unknown";
+
+            // ==================== UPDATE NODE STATUS BOX ====================
+            const statusContent = document.getElementById("status-content");
+            if (!statusContent) return;
+
+            const flameText = payload.flame === 1 
+                ? '<span style="color:#ff0000; font-weight:bold;">🔥 FIRE DETECTED! ALERT!</span>'
+                : 'Normal';
+
+            const smokeText = payload.smoke > 500 
+                ? '<span style="color:#ff8800; font-weight:bold;">HIGH SMOKE!</span>'
+                : payload.smoke;
+
+            statusContent.innerHTML = `
+                <strong>Node:</strong> ${nodeId}<br>
+                <strong>Temperature:</strong> ${payload.temp ?? '--'} °C<br>
+                <strong>Humidity:</strong> ${payload.hum ?? '--'} %<br>
+                <strong>Flame:</strong> ${flameText}<br>
+                <strong>Smoke:</strong> ${smokeText}<br>
+                <strong>Location:</strong> 
+                    ${payload.lat ? payload.lat.toFixed(6) : '--'}, 
+                    ${payload.lon ? payload.lon.toFixed(6) : '--'}<br>
+                <strong>RSSI / SNR:</strong> ${data.rssi ?? '--'} dBm / ${data.snr ?? '--'} dB<br>
+                <strong>Received:</strong> ${data.received_at ? new Date(data.received_at).toLocaleString('en-PH') : 'Just now'}
+            `;
+
+            // ==================== FIRE ALERT ====================
+            if (payload.flame === 1 || payload.smoke > 500) {
+                statusContent.style.backgroundColor = "#ffdddd";
+                statusContent.style.border = "3px solid red";
+                statusContent.style.animation = "flash 1.5s infinite";
+
+                new Audio("https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-996.mp3").play().catch(() => {});
+
+                setTimeout(() => {
+                    statusContent.style.backgroundColor = "";
+                    statusContent.style.border = "";
+                    statusContent.style.animation = "";
+                }, 8000);
+            }
+
+            // ==================== OPTIONAL: MOVE MAP ====================
+            if (payload.lat && payload.lon && typeof map !== 'undefined') {
+                map.setView([payload.lat, payload.lon], 15);
+            }
+
+        } catch (err) {
+            console.error("Failed to parse MQTT message:", err);
+        }
+    });
+
+    client.on('error', (err) => {
+        console.error("MQTT Error:", err);
+        document.getElementById("mqtt-status")?.textContent = "Connection error – retrying...";
+    });
+
+    client.on('close', () => {
+        console.log("MQTT disconnected – reconnecting...");
+        document.getElementById("mqtt-status")?.textContent = "Disconnected – reconnecting...";
+    });
+
+    // ==================== OPTIONAL: INITIAL LOAD FROM API ====================
+    // (fallback if MQTT is slow to connect)
+    window.addEventListener("load", () => {
+        fetch(`${API_BASE}/latest/Node1`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status !== "no_data") {
+                    // Reuse the same update logic as MQTT message
+                    const statusContent = document.getElementById("status-content");
+                    const flameText = data.flame === 1 ? '<span style="color:#ff0000; font-weight:bold;">🔥 FIRE DETECTED!</span>' : 'Normal';
+                    const smokeText = data.smoke > 500 ? '<span style="color:#ff8800; font-weight:bold;">HIGH SMOKE!</span>' : data.smoke;
+
+                    statusContent.innerHTML = `
+                        <strong>Node:</strong> ${data.node_id}<br>
+                        <strong>Temperature:</strong> ${data.temperature ?? '--'} °C<br>
+                        <strong>Humidity:</strong> ${data.humidity ?? '--'} %<br>
+                        <strong>Flame:</strong> ${flameText}<br>
+                        <strong>Smoke:</strong> ${smokeText}<br>
+                        <strong>Location:</strong> 
+                            ${data.latitude ? data.latitude.toFixed(6) : '--'}, 
+                            ${data.longitude ? data.longitude.toFixed(6) : '--'}<br>
+                        <strong>RSSI / SNR:</strong> ${data.rssi ?? '--'} dBm / ${data.snr ?? '--'} dB<br>
+                        <strong>Received:</strong> ${data.display_timestamp || 'N/A'}
+                    `;
+                }
+            })
+            .catch(err => console.error("Initial API load failed:", err));
+    });
+</script>
+
 </body>
 </html>
