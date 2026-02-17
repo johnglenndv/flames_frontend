@@ -15,7 +15,7 @@
     <meta charset="UTF-8"> 
 
     
-    
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
 </head>
 
@@ -121,17 +121,11 @@
 
                     <div class="incident-list">
                         <div class="incident-card">
-                            <div class="incident-title">A.B. Fernandez Ave</div>
-                            <div class="incident-status">Status: <span class="text-active">Active</span></div>
-                            <div class="incident-status">Assigned Team: Pantal</div>
-                            <button class="btn-show-map" onclick="routeToIncident(16.041000, 120.334000)">Show on Map & Route</button>
+                            <p style="text-align:center; color:#aaa; padding:20px;" id="no-incident-msg">Monitoring for fire/smoke alerts...</p>
                         </div>
 
                         <div class="incident-card">
-                            <div class="incident-title">Perez Boulevard</div>
-                            <div class="incident-status">Status: <span class="text-contained">Contained</span></div>
-                            <div class="incident-status">Assigned Team: Lucao</div>
-                            <button class="btn-show-map" onclick="routeToIncident(16.043300, 120.333300)">Show on Map & Route</button>
+                            <p style="text-align:center; color:#aaa; padding:20px;" id="no-incident-msg">Monitoring for fire/smoke alerts...</p>
                         </div>
 
                         <div class="incident-card">
@@ -225,6 +219,115 @@
         <script src ="static/ProfileSettings.js"></script>
 
 
+        <script>
+    // ==================== REAL-TIME MQTT CONFIG ====================
+    const MQTT_BROKER = "wss://528e719c19214a19b07c0e7322298267.s1.eu.hivemq.cloud:8884/mqtt";
+    const MQTT_TOPIC  = "lora/uplink";
+    const MQTT_USER   = "Downlink01";  // Change to your real user
+    const MQTT_PASS   = "Downlink01";  // Change to your real pass
+
+    const client = mqtt.connect(MQTT_BROKER, {
+        username: MQTT_USER,
+        password: MQTT_PASS,
+        reconnectPeriod: 5000,
+        clean: true
+    });
+
+    client.on('connect', () => {
+        console.log("✅ Connected to HiveMQ – real-time active");
+        client.subscribe(MQTT_TOPIC, (err) => {
+            if (!err) {
+                document.getElementById("mqtt-status").textContent = "Live feed connected";
+            } else {
+                document.getElementById("mqtt-status").textContent = "Connection error";
+                console.error("Subscribe failed:", err);
+            }
+        });
+    });
+
+    client.on('message', (topic, message) => {
+        try {
+            const data = JSON.parse(message.toString());
+            const payload = data.payload || {};
+            const nodeId = payload.node;
+
+            if (!nodeId) return;
+
+            // Save latest data
+            window.nodeDataCache[nodeId] = {
+                temp: payload.temp,
+                hum: payload.hum,
+                flame: payload.flame || 0,
+                smoke: payload.smoke || 0,
+                lat: payload.lat,
+                lon: payload.lon,
+                rssi: data.rssi,
+                snr: data.snr,
+                received_at: data.received_at
+            };
+
+            // Create/update marker
+            if (payload.lat && payload.lon) {
+                createOrUpdateNodeMarker(nodeId, payload.lat, payload.lon);
+            }
+
+            // Update status if this node is selected
+            const header = document.getElementById('header-right');
+            if (header && header.textContent.includes(nodeId)) {
+                updateNodeStatusCard(nodeId);
+            }
+
+            // Update incidents
+            updateIncidents();
+
+        } catch (err) {
+            console.error("MQTT parse error:", err);
+        }
+    });
+
+    client.on('error', (err) => {
+        console.error("MQTT Error:", err);
+        document.getElementById("mqtt-status").textContent = "Connection error – retrying...";
+    });
+
+    client.on('close', () => {
+        console.log("MQTT disconnected – reconnecting...");
+        document.getElementById("mqtt-status").textContent = "Disconnected – reconnecting...";
+    });
+
+    // ==================== UPDATE LIVE INCIDENTS ====================
+    function updateIncidents() {
+        const incidentList = document.getElementById("incident-list");
+        const incidentCountEl = document.getElementById("incident-count");
+        const noMsg = document.getElementById("no-incident-msg");
+
+        if (!incidentList || !incidentCountEl) return;
+
+        incidentList.innerHTML = "";
+        let count = 0;
+
+        Object.keys(window.nodeDataCache).forEach(nodeId => {
+            const data = window.nodeDataCache[nodeId];
+            if (data.flame === 1 || data.smoke > 500) {
+                count++;
+                const card = document.createElement("div");
+                card.className = "incident-card";
+                card.innerHTML = `
+                    <div class="incident-title">${nodeId}</div>
+                    <div class="incident-status">Status: <span class="text-active">Active</span></div>
+                    <div class="incident-status">Detected: ${data.received_at ? new Date(data.received_at).toLocaleString('en-PH') : 'Just now'}</div>
+                    <div class="incident-status">Assigned Team: JERICK & SHERWIN</div>
+                    <button class="btn-show-map" onclick="routeToIncident(${data.lat || 16.0}, ${data.lon || 120.0})">Show on Map & Route</button>
+                `;
+                incidentList.appendChild(card);
+            }
+        });
+
+        incidentCountEl.textContent = count;
+
+        noMsg.style.display = count > 0 ? 'none' : 'block';
+    }
+</script>
 
 
     

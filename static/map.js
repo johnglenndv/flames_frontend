@@ -1,5 +1,12 @@
 var map = L.map('flames-map',{ zoomControl: false}).setView([16.046962, 120.342117], 12);
 
+// Global cache for latest node data (updated by MQTT)
+     window.nodeDataCache = {};
+
+     // Storage for Leaflet marker objects
+     window.nodeMarkers = {};
+     
+
 // 1. GLOBAL VARIABLES
 window.currentLocationMarker = null;
 window.currentLocationCircle = null;
@@ -117,11 +124,6 @@ var nodeIcon = L.icon({
     popupAnchor: [0, -35]
 });
 
-var nodesData = [
-    { name: "Malasiqui", coords: [15.931320, 120.427939], temp: "28&deg;C", humidity: "68%", smoke: "Clear", flame: "Negative" },
-    { name: "San Carlos", coords: [15.937700, 120.343361], temp: "45&deg;C", humidity: "66%", smoke: "Positive", flame: "Alert" },
-    { name: "Binmaley", coords: [16.028410, 120.269180], temp: "30&deg;C", humidity: "71%", smoke: "Clear", flame: "Negative" }
-];
 
 function resetNodeStatus() {
     var statusContent = document.getElementById('status-content');
@@ -142,50 +144,7 @@ document.getElementById('home-btn').addEventListener('click', function(e) {
 });
 
 // NODES LOGIC
-nodesData.forEach(function(node) {
-    var marker = L.marker(node.coords, { icon: nodeIcon })
-        .addTo(map)
-        .bindPopup(node.name, {
-            autoClose: false,
-            closeOnClick: false,
-            closeButton: true
-        }); 
 
-    marker.on('mouseover', function () { this.openPopup(); });
-    marker.on('mouseout', function () { this.closePopup(); });
-    
-    marker.on('click', function(e) {
-        L.DomEvent.stopPropagation(e); 
-        this.openPopup(); 
-        map.flyTo(e.latlng, 18, { animate: true, duration: 1.5 });
-
-        var statusContent = document.getElementById('status-content');
-        var headerRight = document.getElementById('header-right');
-        if (headerRight) headerRight.innerHTML = ""; 
-        statusContent.style.alignItems = "stretch";
-        statusContent.style.opacity = "1";
-        
-        statusContent.innerHTML = `
-        <div class="node-popup-container">
-            <div class="node-location">
-                <p>Location:   <span class="val">${node.name}</span></p>
-            </div>
-
-            <div class="node-data-grid">
-                <div class="left-data">
-                    <p><img src="icons/temperature.png" class="node-icon">Temp: <span class="val">${node.temp}</span></p>
-                    <p><img src="icons/humidity.png" class="node-icon">Humidity: <span class="val">${node.humidity}</span></p>
-                </div>
-
-                <div class="right-data">
-                    <p><img src="icons/smoke.png" class="node-icon">Smoke: <span class="val">${node.smoke}</span></p>
-                    <p><img src="icons/flame.png" class="node-icon">Flame: <span class="val">${node.flame}</span></p>
-                </div>
-            </div>
-        </div>
-        `;
-    });
-});
 
 document.addEventListener('DOMContentLoaded', function() {
     const viewAllBtn = document.querySelector('.view-all-btn');
@@ -537,6 +496,78 @@ function clearSearchInput() {
     if (typeof clearPreviousRoute === "function") {
         clearPreviousRoute();
     }
+}
+
+// Create or update marker for a node
+function createOrUpdateNodeMarker(nodeId, lat, lon) {
+    if (!lat || !lon) return;
+
+    const data = window.nodeDataCache[nodeId] || {};
+
+    // Remove old marker if exists
+    if (window.nodeMarkers[nodeId]) {
+        map.removeLayer(window.nodeMarkers[nodeId]);
+    }
+
+    // Create new marker
+    const marker = L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup(getNodePopupContent(nodeId, data));
+
+    // Click → update status card + fly to location
+    marker.on('click', function(e) {
+        map.flyTo([lat, lon], 16);
+        updateNodeStatusCard(nodeId);
+        this.openPopup();
+    });
+
+    window.nodeMarkers[nodeId] = marker;
+}
+
+// Popup content when hovering/clicking marker
+function getNodePopupContent(nodeId, data) {
+    return `
+        <strong>${nodeId}</strong><br>
+        Temp: ${data.temp ?? '--'}°C | Hum: ${data.hum ?? '--'}%<br>
+        Flame: ${data.flame === 1 ? '🔥 ALERT' : 'Normal'}<br>
+        Smoke: ${data.smoke ?? 0}<br>
+        Last: ${data.received_at ? new Date(data.received_at).toLocaleString('en-PH') : 'Waiting...'}
+    `;
+}
+
+// Update the Node Status card in dashboard.html
+function updateNodeStatusCard(nodeId) {
+    const statusContent = document.getElementById('status-content');
+    const headerRight = document.getElementById('header-right');
+
+    if (!statusContent || !headerRight) return;
+
+    headerRight.innerHTML = `${nodeId} • Live`;
+
+    const data = window.nodeDataCache[nodeId];
+    if (!data) {
+        statusContent.innerHTML = "<p>No recent data for this node.</p>";
+        return;
+    }
+
+    const flameText = data.flame === 1 
+        ? '<span style="color:#ff0000; font-weight:bold;">DETECTED 🔥 ALERT!</span>'
+        : 'Normal';
+
+    const smokeText = data.smoke > 500 
+        ? '<span style="color:#ff8800; font-weight:bold;">HIGH SMOKE!</span>'
+        : data.smoke;
+
+    statusContent.innerHTML = `
+        <strong>Node:</strong> ${nodeId}<br>
+        <strong>Temperature:</strong> ${data.temp ?? '--'} °C<br>
+        <strong>Humidity:</strong> ${data.hum ?? '--'} %<br>
+        <strong>Flame:</strong> ${flameText}<br>
+        <strong>Smoke:</strong> ${smokeText}<br>
+        <strong>Location:</strong> ${data.lat ? data.lat.toFixed(6) : '--'}, ${data.lon ? data.lon.toFixed(6) : '--'}<br>
+        <strong>RSSI / SNR:</strong> ${data.rssi ?? '--'} dBm / ${data.snr ?? '--'} dB<br>
+        <strong>Last Update:</strong> ${data.received_at ? new Date(data.received_at).toLocaleString('en-PH') : 'Just now'}
+    `;
 }
 
 // Close suggestions on map interaction
