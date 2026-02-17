@@ -1,4 +1,4 @@
-var map = L.map('flames-map',{ zoomControl: false}).setView([16.046962, 120.342117], 12); 
+var map = L.map('flames-map',{ zoomControl: false}).setView([16.046962, 120.342117], 12);
 
 // 1. GLOBAL VARIABLES
 window.currentLocationMarker = null;
